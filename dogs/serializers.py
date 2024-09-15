@@ -1,36 +1,34 @@
 from rest_framework import serializers
 
-from dogs.models import Breed, Dog, Owner, WeightEntry, Vaccination
+from dogs.models import Breed, Dog, Owner, Hobby, Country
 
 class BreedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Breed
         fields = "__all__"
 
-class DogSerializer(serializers.ModelSerializer):
-    breed = BreedSerializer()
-
-    class Meta:
-        model = Dog
-        fields = ['id', 'name', 'breed']
 
 class OwnerSerializer(serializers.ModelSerializer):
-    owner = DogSerializer()
-
     class Meta:
         model = Owner
         fields = ['id', 'first_name', 'last_name', 'phone_number']
 
-class WeightEntrySerializer(serializers.ModelSerializer):
-    weight = DogSerializer()
+class HobbySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Hobby
+        fields = ['id', 'name_hobby']      
+
+class CountrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Country
+        fields = ['id', 'country'] 
+
+class DogSerializer(serializers.ModelSerializer):
+    breed = BreedSerializer(read_only=True)
+    owner = OwnerSerializer(read_only=True)
+    weight = HobbySerializer(read_only=True)
+    vac = CountrySerializer(read_only=True)
 
     class Meta:
-        model = WeightEntry
-        fields = ['id', 'date', 'weight']      
-
-class VaccinationSerializer(serializers.ModelSerializer):
-    vac = DogSerializer()
-
-    class Meta:
-        model = Vaccination
-        fields = ['id', 'name', 'date']   
+        model = Dog
+        fields = ['id', 'name', 'breed','owner', 'hobby', 'country']  

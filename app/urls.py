@@ -20,10 +20,14 @@ from django.urls import include, path
 from dogs import views
 from rest_framework.routers import DefaultRouter
 
-from dogs.api import DogsViewset
+from dogs.api import DogsViewset, BreedsViewset, CountryViewset, HobbyViewset, OwnersViewset
 
-router = DefaultRouter()
+router = DefaultRouter() 
 router.register("dogs", DogsViewset, basename="dogs")
+router.register("breed", BreedsViewset, basename="breed")
+router.register("owner", OwnersViewset, basename="owner")
+router.register("country", CountryViewset, basename="country")
+router.register("hobby", HobbyViewset, basename="hobby")
 
 urlpatterns = [
     path('', views.ShowDogsView.as_view()),

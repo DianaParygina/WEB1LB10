@@ -14,6 +14,9 @@ class Breed(models.Model):
 class Dog(models.Model):
     name = models.TextField("Название")
     breed = models.ForeignKey("Breed", on_delete=models.CASCADE, null=True)
+    owner = models.ForeignKey("Owner", on_delete=models.CASCADE, null=True, related_name='dogs')
+    country = models.ForeignKey("Country", on_delete=models.CASCADE, null=True, related_name='dog_country')
+    hobby = models.ForeignKey("Hobby", on_delete=models.CASCADE, null=True, related_name='dog_hobby')
 
     class Meta:
         verbose_name = "Собака"
@@ -27,7 +30,6 @@ class Owner(models.Model):
     first_name = models.TextField("Имя")
     last_name = models.TextField("Фамилия")
     phone_number = models.TextField("Номер телефона")
-    dogs = models.ForeignKey("Dog", on_delete=models.CASCADE, null=True)
 
     class Meta:
         verbose_name = "Владелец"
@@ -37,27 +39,23 @@ class Owner(models.Model):
         return f"{self.first_name} {self.last_name}"
     
 
-class WeightEntry(models.Model):
-    date = models.DateField("Дата")
-    weight = models.TextField("Вес (кг)")
-    dogs = models.ForeignKey("Dog", on_delete=models.CASCADE, null=True)
+class Country(models.Model):
+    country = models.TextField("Страна проживания")
 
     class Meta:
-        verbose_name = "Запись веса"
-        verbose_name_plural = "Записи веса"
+        verbose_name = "Страна проживания"
+        verbose_name_plural = "Страны"
 
-    def __str__(self):
-        return f"{self.weight} кг" 
+    def __str__(self) -> str:
+        return f"{self.country}" 
     
 
-class Vaccination(models.Model):
-    name = models.TextField("Название прививки")
-    date = models.DateField("Дата прививки")
-    dogs = models.ForeignKey("Dog", on_delete=models.CASCADE, null=True)
+class Hobby(models.Model):
+    name_hobby = models.TextField("Название хобби")
 
     class Meta:
-        verbose_name = "Прививка"
-        verbose_name_plural = "Прививки"
+        verbose_name = "Хобба"
+        verbose_name_plural = "Хобби"
 
-    def __str__(self):
-        return f"{self.name}"      
+    def __str__(self) -> str:
+        return f"{self.name_hobby}"      

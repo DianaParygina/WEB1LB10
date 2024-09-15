@@ -1,5 +1,5 @@
 from django.contrib import admin
-from dogs.models import Vaccination, Breed, Dog, Owner, WeightEntry
+from dogs.models import Country, Breed, Dog, Owner, Hobby
 # Register your models here.
 @admin.register(Dog)
 class DogAdmin(admin.ModelAdmin):
@@ -13,10 +13,10 @@ class BreedAdmin(admin.ModelAdmin):
 class OwnerAdmin(admin.ModelAdmin):
     list_display = ['id', 'first_name', 'last_name', 'phone_number']      
 
-@admin.register(WeightEntry)
-class WeightEntryAdmin(admin.ModelAdmin):
-    list_display = ['id', 'date', 'weight']      
+@admin.register(Country)
+class CountryAdmin(admin.ModelAdmin):
+    list_display = ['id', 'country']      
 
-@admin.register(Vaccination)
-class VaccinationAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'date']   
+@admin.register(Hobby)
+class HobbyAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name_hobby']   
