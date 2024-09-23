@@ -1,10 +1,14 @@
 from django.test import TestCase
 from dogs.models import Breed, Dog, Hobby, Owner, Country
 from model_bakery import baker
+from rest_framework import APIClient
 
 
 # Create your tests here.
 class DogsViewsetTestCase(TestCase):
+    def setUp(self) -> None:
+        self.client = APIClient()
+
     def test_list(self):
         self.assertEqual(1,1)
 
@@ -64,46 +68,45 @@ class DogsViewsetTestCase(TestCase):
         assert dog_id_to_delete not in [i['id'] for i in data] 
 
 
-    # def test_update_dog(self):
-    #     dogs = baker.make("Dog", 10)
-    #     dog: Dog = dogs[2]
-    #     brd = baker.make("dogs.Breed")
-    #     hb = baker.make("dogs.Hobby")
-    #     cnt = baker.make("dogs.Country")
-    #     own = baker.make("dogs.Owner")
+    def test_update_dog(self):
+        brd = baker.make("dogs.Breed")
+        hb = baker.make("dogs.Hobby")
+        cnt = baker.make("dogs.Country")
+        own = baker.make("dogs.Owner")
+        dogs = baker.make("Dog", 10, breed = brd, hobby = hb, country = cnt, owner = own)
+        dog: Dog = dogs[2]
 
-    #     r = self.client.get(f'/api/dogs/{dog.id}/')
-    #     data = r.json()
-    #     assert data['name'] == dog.name
-    #     assert data['breed']['id'] == dog.breed.id 
-    #     assert data['hobby']['id'] == dog.hobby.id 
-    #     assert data['country']['id'] == dog.country.id 
-    #     assert data['owner']['id'] == dog.owner.id 
+        r = self.client.get(f'/api/dogs/{dog.id}/')
+        data = r.json()
+        assert data['name'] == dog.name
+        assert data['breed']['id'] == dog.breed.id 
+        assert data['hobby']['id'] == dog.hobby.id 
+        assert data['country']['id'] == dog.country.id 
+        assert data['owner']['id'] == dog.owner.id 
 
-    #     r = self.client.patch(
-    #         f'/api/dogs/{dog.id}/',
-    #         json.dumps({
-    #             "name": "Коржик",
-    #             "breed": brd.id,
-    #             "hobby": hb.id,
-    #             "country": cnt.id,
-    #             "owner": own.id
-    #         }),
-    #         content_type='application/json'
-    #     )
-    #     assert r.status_code == 200
+        r = self.client.patch(
+            f'/api/dogs/{dog.id}/',
+            {
+                "name": "Коржик",
+                "breed": brd.id,
+                "hobby": hb.id,
+                "country": cnt.id,
+                "owner": own.id
+            }
+        )
+        assert r.status_code == 200
 
-    #     r = self.client.get(f'/api/dogs/{dog.id}/')
-    #     data = r.json()
-    #     assert data['name'] == "Коржик"
-    #     assert data['breed']['id'] == brd.id 
-    #     assert data['hobby']['id'] == hb.id 
-    #     assert data['country']['id'] == cnt.id 
-    #     assert data['owner']['id'] == own.id 
+        r = self.client.get(f'/api/dogs/{dog.id}/')
+        data = r.json()
+        assert data['name'] == "Коржик"
+        assert data['breed']['id'] == brd.id 
+        assert data['hobby']['id'] == hb.id 
+        assert data['country']['id'] == cnt.id 
+        assert data['owner']['id'] == own.id 
 
-    #     dog.refresh_from_db()
-    #     assert data['name'] == dog.name
-    #     assert data['breed']['id'] == brd.id 
-    #     assert data['hobby']['id'] == hb.id 
-    #     assert data['country']['id'] == cnt.id 
-    #     assert data['owner']['id'] == own.id
+        dog.refresh_from_db()
+        assert data['name'] == dog.name
+        assert data['breed']['id'] == brd.id 
+        assert data['hobby']['id'] == hb.id 
+        assert data['country']['id'] == cnt.id 
+        assert data['owner']['id'] == own.id
