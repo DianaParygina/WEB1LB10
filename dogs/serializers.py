@@ -23,12 +23,18 @@ class CountrySerializer(serializers.ModelSerializer):
         model = Country
         fields = ['id', 'country'] 
 
-class DogSerializer(serializers.ModelSerializer):
+class DogListSerializer(serializers.ModelSerializer):
     breed = BreedSerializer(read_only=True)
     owner = OwnerSerializer(read_only=True)
-    weight = HobbySerializer(read_only=True)
-    vac = CountrySerializer(read_only=True)
+    hobby = HobbySerializer(read_only=True)
+    country = CountrySerializer(read_only=True)
 
+    class Meta:
+        model = Dog
+        fields = ['id', 'name', 'breed','owner', 'hobby', 'country']  
+
+
+class DogCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dog
         fields = ['id', 'name', 'breed','owner', 'hobby', 'country']  
