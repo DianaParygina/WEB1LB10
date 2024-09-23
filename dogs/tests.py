@@ -1,7 +1,7 @@
 from django.test import TestCase
 from dogs.models import Breed, Dog, Hobby, Owner, Country
 from model_bakery import baker
-from rest_framework import APIClient
+from rest_framework.test import APIClient
 
 
 # Create your tests here.
@@ -73,6 +73,7 @@ class DogsViewsetTestCase(TestCase):
         hb = baker.make("dogs.Hobby")
         cnt = baker.make("dogs.Country")
         own = baker.make("dogs.Owner")
+
         dogs = baker.make("Dog", 10, breed = brd, hobby = hb, country = cnt, owner = own)
         dog: Dog = dogs[2]
 
