@@ -1,5 +1,5 @@
 from django.test import TestCase
-from dogs.models import Breed, Dog
+from dogs.models import Breed, Dog, Hobby, Owner, Country
 from model_bakery import baker
 
 
