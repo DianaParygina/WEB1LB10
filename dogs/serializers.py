@@ -7,6 +7,10 @@ class BreedSerializer(serializers.ModelSerializer):
         model = Breed
         fields = "__all__"
 
+class BreedCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Breed
+        fields = ['id', 'name'] 
 
 class OwnerSerializer(serializers.ModelSerializer):
     class Meta:

@@ -111,3 +111,76 @@ class DogsViewsetTestCase(TestCase):
         assert data['hobby']['id'] == hb.id 
         assert data['country']['id'] == cnt.id 
         assert data['owner']['id'] == own.id
+
+
+
+class BreedViewsetTestCase(TestCase):
+    def setUp(self) -> None:
+        self.client = APIClient()
+
+    def test_list(self):
+        self.assertEqual(1,1)
+
+    def test_get_list2(self):
+        brd = baker.make("dogs.Breed")
+
+        r = self.client.get('/api/breed/')
+        data = r.json()
+        print(data)
+
+        assert brd.name == data[0]['name']
+        assert len(data) == 1
+
+
+    def test_create_breed(self):
+        r = self.client.post("/api/breed/", {
+            "name": "Собака2",
+        })
+
+        new_breed_id = r.json()['id']
+
+        breeds = Breed.objects.all()
+        assert len(breeds) == 1
+
+        new_breed = Breed.objects.filter(id=new_breed_id).first()
+        assert new_breed.name == "Собака2"
+
+
+    def test_delete_breed(self):
+        breeds = baker.make("Breed", 10)
+        r = self.client.get("/api/breed/")
+        data = r.json()
+        assert len(data) == 10
+
+        breed_id_to_delete = breeds[3].id
+        self.client.delete(f'/api/breed/{breed_id_to_delete}/')
+
+        r = self.client.get("/api/breed/")
+        data = r.json()
+        assert len(data) == 9
+
+        assert breed_id_to_delete not in [i['id'] for i in data] 
+
+
+    def test_update_breed(self):
+        breeds = baker.make("Breed", 10)
+        breed: Breed = breeds[2]
+
+        r = self.client.get(f'/api/breed/{breed.id}/')
+        data = r.json()
+        assert data['name'] == breed.name 
+
+        r = self.client.patch(
+            f'/api/breed/{breed.id}/',
+            {
+                "name": "Собака2",
+            }
+        )
+        assert r.status_code == 200
+
+        r = self.client.get(f'/api/breed/{breed.id}/')
+        data = r.json()
+        assert data['name'] == "Собака2"
+
+        breed.refresh_from_db()
+        assert data['name'] == breed.name
