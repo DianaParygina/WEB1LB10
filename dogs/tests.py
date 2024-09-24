@@ -184,3 +184,89 @@ class BreedViewsetTestCase(TestCase):
 
         breed.refresh_from_db()
         assert data['name'] == breed.name
+
+
+class OwnerViewsetTestCase(TestCase):
+    def setUp(self) -> None:
+        self.client = APIClient()
+
+    def test_list(self):
+        self.assertEqual(1,1)
+
+    def test_get_list3(self):
+        own = baker.make("dogs.Owner")
+
+        r = self.client.get('/api/owner/')
+        data = r.json()
+        print(data)
+
+        assert own.first_name == data[0]['first_name']
+        assert own.last_name == data[0]['last_name']
+        assert own.phone_number == data[0]['phone_number']
+        assert len(data) == 1
+
+
+    def test_create_owner(self):
+        r = self.client.post("/api/owner/", {
+            "first_name": "Петя",
+            "last_name": "Иванов",
+            "phone_number": "34545656787"
+        })
+
+        new_owner_id = r.json()['id']
+
+        owners = Owner.objects.all()
+        assert len(owners) == 1
+
+        new_owner = Owner.objects.filter(id=new_owner_id).first()
+        assert new_owner.first_name == "Петя"
+        assert new_owner.last_name == "Иванов"
+        assert new_owner.phone_number == "34545656787"
+
+
+    def test_delete_owner(self):
+        owners = baker.make("Owner", 10)
+        r = self.client.get("/api/owner/")
+        data = r.json()
+        assert len(data) == 10
+
+        owner_id_to_delete = owners[3].id
+        self.client.delete(f'/api/owner/{owner_id_to_delete}/')
+
+        r = self.client.get("/api/owner/")
+        data = r.json()
+        assert len(data) == 9
+
+        assert owner_id_to_delete not in [i['id'] for i in data] 
+
+
+    def test_update_owner(self):
+        owners = baker.make("Owner", 10)
+        owner: Owner = owners[2]
+
+        r = self.client.get(f'/api/owner/{owner.id}/')
+        data = r.json()
+        assert data['first_name'] == owner.first_name 
+        assert data['last_name'] == owner.last_name 
+        assert data['phone_number'] == owner.phone_number 
+
+        r = self.client.patch(
+            f'/api/owner/{owner.id}/',
+            {
+                "first_name": "Петя",
+                "last_name": "Иванов",
+                "phone_number": "34545656787",
+            }
+        )
+        assert r.status_code == 200
+
+        r = self.client.get(f'/api/owner/{owner.id}/')
+        data = r.json()
+        assert data['first_name'] == "Петя"
+        assert data['last_name'] == "Иванов"
+        assert data['phone_number'] == "34545656787"
+
+        owner.refresh_from_db()
+        assert data['first_name'] == owner.first_name
+        assert data['last_name'] == owner.last_name
+        assert data['phone_number'] == owner.phone_number
