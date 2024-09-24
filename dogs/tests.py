@@ -270,3 +270,146 @@ class OwnerViewsetTestCase(TestCase):
         assert data['first_name'] == owner.first_name
         assert data['last_name'] == owner.last_name
         assert data['phone_number'] == owner.phone_number
+
+class CountryViewsetTestCase(TestCase):
+    def setUp(self) -> None:
+        self.client = APIClient()
+
+    def test_list(self):
+        self.assertEqual(1,1)
+
+    def test_get_list2(self):
+        cnt = baker.make("dogs.Country")
+
+        r = self.client.get('/api/country/')
+        data = r.json()
+        print(data)
+
+        assert cnt.country == data[0]['country']
+        assert len(data) == 1
+
+
+    def test_create_country(self):
+        r = self.client.post("/api/country/", {
+            "country": "СССССР",
+        })
+
+        new_country_id = r.json()['id']
+
+        countries = Country.objects.all()
+        assert len(countries) == 1
+
+        new_country = Country.objects.filter(id=new_country_id).first()
+        assert new_country.country == "СССССР"
+
+
+    def test_delete_country(self):
+        countries = baker.make("Country", 10)
+        r = self.client.get("/api/country/")
+        data = r.json()
+        assert len(data) == 10
+
+        country_id_to_delete = countries[3].id
+        self.client.delete(f'/api/country/{country_id_to_delete}/')
+
+        r = self.client.get("/api/country/")
+        data = r.json()
+        assert len(data) == 9
+
+        assert country_id_to_delete not in [i['id'] for i in data] 
+
+
+    def test_update_country(self):
+        countries = baker.make("Country", 10)
+        country: Country = countries[2]
+
+        r = self.client.get(f'/api/country/{country.id}/')
+        data = r.json()
+        assert data['country'] == country.country 
+
+        r = self.client.patch(
+            f'/api/country/{country.id}/',
+            {
+                "country": "СССССР",
+            }
+        )
+        assert r.status_code == 200
+
+        r = self.client.get(f'/api/country/{country.id}/')
+        data = r.json()
+        assert data['country'] == "СССССР"
+
+        country.refresh_from_db()
+        assert data['country'] == country.country
+
+
+class HobbyViewsetTestCase(TestCase):
+    def setUp(self) -> None:
+        self.client = APIClient()
+
+    def test_list(self):
+        self.assertEqual(1,1)
+
+    def test_get_list3(self):
+        hb = baker.make("dogs.Hobby")
+
+        r = self.client.get('/api/hobby/')
+        data = r.json()
+        print(data)
+
+        assert hb.name_hobby == data[0]['name_hobby']
+        assert len(data) == 1
+
+
+    def test_create_hobby(self):
+        r = self.client.post("/api/hobby/", {
+            "name_hobby": "Сон",
+        })
+
+        new_hobby_id = r.json()['id']
+
+        hobbies = Hobby.objects.all()
+        assert len(hobbies) == 1
+
+        new_hobby = Hobby.objects.filter(id=new_hobby_id).first()
+        assert new_hobby.name_hobby == "Сон"
+
+
+    def test_delete_hobby(self):
+        hobbies = baker.make("Hobby", 10)
+        r = self.client.get("/api/hobby/")
+        data = r.json()
+        assert len(data) == 10
+
+        hobby_id_to_delete = hobbies[3].id
+        self.client.delete(f'/api/hobby/{hobby_id_to_delete}/')
+
+        r = self.client.get("/api/hobby/")
+        data = r.json()
+        assert len(data) == 9
+
+        assert hobby_id_to_delete not in [i['id'] for i in data] 
+
+
+    def test_update_hobby(self):
+        hobbies = baker.make("Hobby", 10)
+        hobby: Hobby = hobbies[2]
+
+        r = self.client.get(f'/api/hobby/{hobby.id}/')
+        data = r.json()
+        assert data['name_hobby'] == hobby.name_hobby
+
+        r = self.client.patch(
+            f'/api/hobby/{hobby.id}/',
+            {
+                "name_hobby": "Сон",
+            }
+        )
+        assert r.status_code == 200
+
+        r = self.client.get(f'/api/hobby/{hobby.id}/')
+        data = r.json()
+        assert data['name_hobby'] == "Сон"
+
+        hobby.refresh_from_db()
+        assert data['name_hobby'] == hobby.name_hobby
