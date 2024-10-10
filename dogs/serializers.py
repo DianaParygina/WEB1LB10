@@ -41,4 +41,10 @@ class DogListSerializer(serializers.ModelSerializer):
 class DogCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dog
-        fields = ['id', 'name', 'breed','owner', 'hobby', 'country']  
+        fields = ['id', 'name', 'breed','owner', 'hobby', 'country']
+
+
+class DogUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Dog
+        fields = ['id', 'name', 'breed','owner', 'hobby', 'country']            

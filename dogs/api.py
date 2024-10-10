@@ -2,7 +2,7 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework import mixins, viewsets
 
 from dogs.models import Breed, Dog, Owner, Country, Hobby
-from dogs.serializers import DogCreateSerializer, DogListSerializer, BreedSerializer, OwnerSerializer, CountrySerializer, HobbySerializer
+from dogs.serializers import DogCreateSerializer, DogListSerializer, BreedSerializer, OwnerSerializer, CountrySerializer, HobbySerializer, DogUpdateSerializer
 
 class DogsViewset(
     mixins.CreateModelMixin, 
@@ -19,6 +19,8 @@ class DogsViewset(
         print(self.action)
         if self.action == 'create':
             return DogCreateSerializer
+        if self.action == 'update':
+            return DogUpdateSerializer
         return super(DogsViewset, self).get_serializer_class()        
 
 class BreedsViewset(
